@@ -130,3 +130,32 @@ For a traditional Node host, run `npm install`, `npm run build`, then `npm start
 ## Notes
 
 The app requires reachable MySQL and MongoDB instances and valid environment variables to operate fully. The source bundle is deployable, but it is not automatically hosted or connected to your cloud database by this download.
+
+## Project verification checklist
+
+Use this checklist when setting up FEASTLINK locally or preparing a demo.
+
+### Environment and startup
+- [ ] Configure `.env.local` using `.env.example`.
+- [ ] Confirm MySQL and MongoDB are reachable.
+- [ ] Apply `database/schema.sql` to the MySQL database.
+- [ ] Install dependencies with `npm install`.
+- [ ] Start the application with `npm run dev`.
+
+### Core workflows
+- [ ] Register and log in as an Organizer.
+- [ ] Create a surplus-food listing.
+- [ ] Register and log in as a Shelter Admin.
+- [ ] Browse available food and submit a request.
+- [ ] Verify pending requests do not reduce available meal capacity.
+- [ ] Approve a request and verify allocation and delivery records are created.
+- [ ] Reject a request and verify no allocation is created.
+- [ ] Progress a delivery through pickup, transit, and delivered.
+- [ ] Record donation history after delivery.
+- [ ] Confirm dashboard and history totals reflect the completed workflow.
+
+### Before sharing or deployment
+- [ ] Ensure `.env.local` and real credentials are not committed.
+- [ ] Use a strong, unique `JWT_SECRET`.
+- [ ] Do not use demo credentials in production.
+- [ ] Review the production-hardening recommendations above.
