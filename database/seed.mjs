@@ -1,0 +1,12 @@
+import mysql from 'mysql2/promise';
+import bcrypt from 'bcryptjs';
+const db=await mysql.createConnection({host:process.env.MYSQL_HOST||'localhost',port:Number(process.env.MYSQL_PORT||3306),user:process.env.MYSQL_USER||'root',password:process.env.MYSQL_PASSWORD||'',database:process.env.MYSQL_DATABASE||'feastlink'});
+const hash=await bcrypt.hash('FeastLink@123',12);
+const [org]=await db.execute("INSERT INTO users(name,email,phone,password,role) VALUES('Demo Organizer','organizer@feastlink.demo','9999999901',?,'ORGANIZER') ON DUPLICATE KEY UPDATE user_id=LAST_INSERT_ID(user_id)",[hash]);
+const [shelterUser]=await db.execute("INSERT INTO users(name,email,phone,password,role) VALUES('Demo Shelter Admin','shelter@feastlink.demo','9999999902',?,'SHELTER_ADMIN') ON DUPLICATE KEY UPDATE user_id=LAST_INSERT_ID(user_id)",[hash]);
+const orgId=org.insertId, shUserId=shelterUser.insertId;
+await db.execute("INSERT INTO shelter_homes(user_id,shelter_name,location,contact_person,phone,number_of_residents,food_preference) VALUES(?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE shelter_name=VALUES(shelter_name)",[shUserId,'Sunrise Shelter Home','Indiranagar, Bengaluru','Demo Shelter Admin','9999999902',65,'VEG']);
+const [ev]=await db.execute("INSERT INTO events(organizer_id,event_name,event_type,event_date,location,expected_guests) VALUES(?,?,?,?,?,?)",[orgId,'Community Harvest Dinner','Community gathering',new Date().toISOString().slice(0,10),'Indiranagar, Bengaluru',180]);
+const now=new Date(), later=new Date(Date.now()+24*60*60*1000);const fmt=d=>d.toISOString().slice(0,19).replace('T',' ');
+await db.execute("INSERT INTO surplus_food(event_id,food_name,food_type,quantity,estimated_meals,prepared_time,available_until) VALUES(?,?,?,?,?,?,?)",[ev.insertId,'Vegetable pulao & dal','VEG','12 insulated containers',85,fmt(now),fmt(later)]);
+await db.end();console.log('Demo data ready. Login: organizer@feastlink.demo / FeastLink@123 | shelter@feastlink.demo / FeastLink@123');
